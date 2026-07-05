@@ -3,6 +3,7 @@ nixPkgs = ["jdk21", "maven"]
 
 [phases.install]
 cmds = [
+    "export JAVA_HOME=/nix/store/*openjdk-21*/",
     "mvn clean package -DskipTests"
 ]
 
