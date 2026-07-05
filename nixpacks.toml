@@ -1,11 +1,13 @@
 [phases.setup]
-nixPkgs = ["jdk21"]
+nixPkgs = ["jdk21", "maven"]
 
 [phases.install]
-cmds = ["./mvnw clean package -DskipTests"]
+cmds = [
+    "mvn clean package -DskipTests"
+]
 
 [phases.start]
-cmd = "java -jar target/tracker-backend-*.jar"
+cmd = "java -Dserver.port=$PORT $JAVA_OPTS -jar target/*.jar"
 
 [build.env]
 TIDB_URL = "$TIDB_URL"
