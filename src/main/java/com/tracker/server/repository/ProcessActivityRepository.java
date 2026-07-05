@@ -65,4 +65,9 @@ JpaSpecificationExecutor<ProcessActivity> {
 				List<AppUsageDto> topApps(
 				        @Param("userId")
 				        Long userId);
+			  
+			  
+			  List<ProcessActivity> findByDeviceIdAndStatus(
+				        Long deviceId,
+				        String status);
 }

@@ -1,6 +1,8 @@
 package com.tracker.server.controller;
 
 import java.io.ByteArrayOutputStream;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +46,34 @@ public class ProcessActivityController {
     private final UserRepository userRepository;
     private final DeviceSessionRepository sessionRepository;
     private final IdleActivityRepository idleRepository;
+    
+    
+    @PostMapping("/recover/{deviceId}")
+    public void recoverRunningProcesses(
+            @PathVariable Long deviceId) {
+
+    	   List<ProcessActivity> running =
+    			   processRepository.findByDeviceIdAndStatus(
+    	                    deviceId,
+    	                    "RUNNING");
+
+    	    LocalDateTime now = LocalDateTime.now();
+
+    	    for (ProcessActivity p : running) {
+
+    	        p.setEndTime(now);
+
+    	        p.setDurationSeconds(
+    	                Duration.between(
+    	                        p.getStartTime(),
+    	                        now)
+    	                        .getSeconds());
+
+    	        p.setStatus("CRASHED");
+    	    }
+
+    	    processRepository.saveAll(running);
+    }
 
     @PostMapping("/{deviceId}")
     public ProcessActivity save(
