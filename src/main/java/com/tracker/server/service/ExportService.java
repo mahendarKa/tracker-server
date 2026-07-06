@@ -30,6 +30,7 @@ import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.repository.DeviceSessionRepository;
 import com.tracker.server.repository.IdleActivityRepository;
 import com.tracker.server.repository.ProcessActivityRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 @Service
 public class ExportService {
@@ -126,7 +127,7 @@ public class ExportService {
         document.add(titlePara);
         
         // Add timestamp
-        Paragraph datePara = new Paragraph("Generated: " + LocalDateTime.now().format(formatter))
+        Paragraph datePara = new Paragraph("Generated: " + DateTimeUtil.now().format(formatter))
                 .setFontSize(10)
                 .setTextAlignment(TextAlignment.CENTER);
         document.add(datePara);

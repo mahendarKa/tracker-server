@@ -2,6 +2,8 @@ package com.tracker.server.entity;
 
 import java.time.LocalDateTime;
 
+import com.tracker.server.util.DateTimeUtil;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -27,6 +29,6 @@ public class User {
     private LocalDateTime createdAt;
     @PrePersist
     public void onCreate() {
-    	this.createdAt=LocalDateTime.now();
+    	this.createdAt=DateTimeUtil.now();
     }
 }

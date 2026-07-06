@@ -1,6 +1,5 @@
 package com.tracker.server.controller;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ import com.tracker.server.entity.User;
 import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.repository.DeviceSessionRepository;
 import com.tracker.server.repository.UserRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +51,7 @@ public class DeviceController {
     	        existingDevice.setStatus("ACTIVE");
     	        existingDevice.setOnline(true);
     	        existingDevice.setUninstalledAt(null);
-    	        existingDevice.setLastSeen(LocalDateTime.now());
+    	        existingDevice.setLastSeen(DateTimeUtil.now());
 
     	        return deviceRepository.save(existingDevice);
     	    }
@@ -72,7 +72,7 @@ public class DeviceController {
                         .lastIpAddress(request.getLastIpAddress())
                         .status("ACTIVE")
                         .online(true)
-                        .lastSeen(LocalDateTime.now())
+                        .lastSeen(DateTimeUtil.now())
                         .user(user)
                         .build();
 
@@ -114,7 +114,7 @@ public class DeviceController {
         Device device = deviceRepository.findById(deviceId)
                 .orElseThrow(() -> new RuntimeException("Device not found: " + deviceId));
 
-        device.setLastSeen(LocalDateTime.now());
+        device.setLastSeen(DateTimeUtil.now());
         device.setOnline(true);
         deviceRepository.save(device);
 
@@ -138,7 +138,7 @@ public class DeviceController {
 
         device.setStatus("UNINSTALLED");
         device.setOnline(false);
-        device.setUninstalledAt(LocalDateTime.now());
+        device.setUninstalledAt(DateTimeUtil.now());
 
         deviceRepository.save(device);
 

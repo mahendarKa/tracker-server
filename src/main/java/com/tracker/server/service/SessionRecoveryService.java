@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.tracker.server.entity.DeviceSession;
 import com.tracker.server.repository.DeviceSessionRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,7 +30,7 @@ public class SessionRecoveryService {
 
         for (DeviceSession session : sessions) {
 
-            LocalDateTime end = LocalDateTime.now();
+            LocalDateTime end = DateTimeUtil.now();
 
             session.setShutdownTime(end);
 

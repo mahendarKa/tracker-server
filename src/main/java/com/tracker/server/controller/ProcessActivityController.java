@@ -33,6 +33,7 @@ import com.tracker.server.repository.DeviceSessionRepository;
 import com.tracker.server.repository.IdleActivityRepository;
 import com.tracker.server.repository.ProcessActivityRepository;
 import com.tracker.server.repository.UserRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -57,7 +58,7 @@ public class ProcessActivityController {
     	                    deviceId,
     	                    "RUNNING");
 
-    	    LocalDateTime now = LocalDateTime.now();
+    	    LocalDateTime now = DateTimeUtil.now();
 
     	    for (ProcessActivity p : running) {
 

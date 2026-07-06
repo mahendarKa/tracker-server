@@ -12,6 +12,7 @@ import com.tracker.server.entity.Device;
 import com.tracker.server.entity.DeviceSession;
 import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.repository.DeviceSessionRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -37,7 +38,7 @@ public class DeviceSessionController {
                         .device(device).user(device.getUser())
                         
                         .startupTime(
-                                LocalDateTime.now())
+                        		DateTimeUtil.now())
                         .status("RUNNING")
                         .build();
 
@@ -56,7 +57,7 @@ public class DeviceSessionController {
                         .orElseThrow();
 
         LocalDateTime end =
-                LocalDateTime.now();
+        		DateTimeUtil.now();
 
         session.setShutdownTime(end);
 
