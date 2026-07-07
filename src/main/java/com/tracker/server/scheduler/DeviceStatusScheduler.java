@@ -20,7 +20,7 @@ public class DeviceStatusScheduler {
 
         LocalDateTime limit =
                 LocalDateTime.now()
-                        .minusMinutes(2);
+                        .minusMinutes(1);
 
         repository.findAll()
                 .forEach(device -> {

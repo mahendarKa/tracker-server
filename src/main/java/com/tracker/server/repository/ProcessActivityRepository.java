@@ -77,6 +77,12 @@ JpaSpecificationExecutor<ProcessActivity> {
 			            Long deviceId,
 			            Long pid,
 			            LocalDateTime startTime);
+			    
+			    
+			    Optional<ProcessActivity> findFirstByDeviceIdAndPidAndStatusOrderByIdDesc(
+			            Long deviceId,
+			            Long pid,
+			            String status);
 			  
 			  
 			  
