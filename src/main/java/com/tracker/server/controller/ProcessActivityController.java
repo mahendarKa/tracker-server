@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -70,23 +71,68 @@ public class ProcessActivityController {
     	                        now)
     	                        .getSeconds());
 
-    	        p.setStatus("CRASHED");
+    	        p.setStatus("INTERUPTED");
     	    }
 
     	    processRepository.saveAll(running);
     }
 
+//    @PostMapping("/{deviceId}")
+//    public ProcessActivity save(
+//            @PathVariable Long deviceId,
+//            @RequestBody ProcessActivity activity) {
+//    	 System.out.println(
+//    		        "PROCESS RECEIVED : "
+//    		        + activity.getProcessName());
+//        Device device =
+//                deviceRepository.findById(deviceId)
+//                        .orElseThrow();
+//        
+//
+//        activity.setDevice(device);
+//        activity.setUser(device.getUser());
+//
+//        return processRepository.save(activity);
+//    }
+    
+    
+    
     @PostMapping("/{deviceId}")
     public ProcessActivity save(
             @PathVariable Long deviceId,
             @RequestBody ProcessActivity activity) {
-    	 System.out.println(
-    		        "PROCESS RECEIVED : "
-    		        + activity.getProcessName());
+
+        System.out.println("PROCESS RECEIVED : "
+                + activity.getProcessName());
+
         Device device =
                 deviceRepository.findById(deviceId)
                         .orElseThrow();
-        
+
+        // Duplicate check
+        Optional<ProcessActivity> existing =
+                processRepository.findByDeviceIdAndPidAndStartTime(
+                        deviceId,
+                        activity.getPid(),
+                        activity.getStartTime());
+
+        if (existing.isPresent()) {
+
+            ProcessActivity db = existing.get();
+
+            // Update only if this is a CLOSED event
+            if ("CLOSED".equals(activity.getStatus())) {
+
+                db.setEndTime(activity.getEndTime());
+                db.setDurationSeconds(activity.getDurationSeconds());
+                db.setStatus(activity.getStatus());
+
+                return processRepository.save(db);
+            }
+
+            // Already exists
+            return db;
+        }
 
         activity.setDevice(device);
         activity.setUser(device.getUser());
