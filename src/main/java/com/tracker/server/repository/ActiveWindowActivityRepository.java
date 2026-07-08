@@ -16,6 +16,7 @@
 package com.tracker.server.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -33,4 +34,6 @@ public interface ActiveWindowActivityRepository extends JpaRepository<ActiveWind
 //    List<ActiveWindowActivity>
 //    findByUser_IdOrderByIdDesc(
 //            Long userId);
+    
+    Optional<ActiveWindowActivity> findByOfflineId(String offlineId);
 }

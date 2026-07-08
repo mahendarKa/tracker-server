@@ -33,6 +33,9 @@ public class ActiveWindowActivity {
     private String windowTitle;
 
     private LocalDateTime startTime;
+    
+    @Column(name = "offline_id", unique = true)
+    private String offlineId;
 
     private LocalDateTime endTime;
 

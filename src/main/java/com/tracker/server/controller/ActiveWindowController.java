@@ -1,5 +1,7 @@
 package com.tracker.server.controller;
 
+import java.util.Optional;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -24,10 +26,39 @@ public class ActiveWindowController {
     private final ActiveWindowActivityRepository repository;
     private final DeviceRepository deviceRepository;
 
+//    @PostMapping("/{deviceId}")
+//    public ActiveWindowActivity save(
+//            @PathVariable Long deviceId,
+//            @RequestBody ActiveWindowActivity activity) {
+//
+//        Device device =
+//                deviceRepository.findById(deviceId)
+//                        .orElseThrow();
+//
+//        activity.setDevice(device);
+//
+//        return repository.save(activity);
+//    }
+    
+    
     @PostMapping("/{deviceId}")
     public ActiveWindowActivity save(
             @PathVariable Long deviceId,
             @RequestBody ActiveWindowActivity activity) {
+
+        Optional<ActiveWindowActivity> existing =
+        		repository.findByOfflineId(activity.getOfflineId());
+
+        if (existing.isPresent()) {
+
+        	ActiveWindowActivity db = existing.get();
+
+            db.setEndTime(activity.getEndTime());
+            db.setDurationSeconds(activity.getDurationSeconds());
+            db.setStatus(activity.getStatus());
+
+            return repository.save(db);
+        }
 
         Device device =
                 deviceRepository.findById(deviceId)
