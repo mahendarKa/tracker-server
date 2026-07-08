@@ -99,16 +99,24 @@ public class ActiveWindowController {
                         deviceId,
                         "RUNNING");
 
-        LocalDateTime now = DateTimeUtil.now();
+        Device device =
+                deviceRepository.findById(deviceId)
+                        .orElseThrow();
+
+        LocalDateTime crashTime = device.getLastSeen();
+
+        if (crashTime == null) {
+            crashTime = DateTimeUtil.now();
+        }
 
         for (ActiveWindowActivity w : running) {
 
-            w.setEndTime(now);
+            w.setEndTime(crashTime);
 
             w.setDurationSeconds(
                     Duration.between(
                             w.getStartTime(),
-                            now).getSeconds());
+                            crashTime).getSeconds());
 
             w.setStatus("INTERRUPTED");
         }

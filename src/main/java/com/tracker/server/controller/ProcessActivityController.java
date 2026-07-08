@@ -59,16 +59,24 @@ public class ProcessActivityController {
     	                    deviceId,
     	                    "RUNNING");
 
-    	    LocalDateTime now = DateTimeUtil.now();
+    	   Device device =
+    		        deviceRepository.findById(deviceId)
+    		                .orElseThrow();
+
+    		LocalDateTime crashTime = device.getLastSeen();
+
+    		if (crashTime == null) {
+    		    crashTime = DateTimeUtil.now();
+    		}
 
     	    for (ProcessActivity p : running) {
 
-    	        p.setEndTime(now);
+    	        p.setEndTime(crashTime);
 
     	        p.setDurationSeconds(
     	                Duration.between(
     	                        p.getStartTime(),
-    	                        now)
+    	                        crashTime)
     	                        .getSeconds());
 
     	        p.setStatus("INTERUPTED");

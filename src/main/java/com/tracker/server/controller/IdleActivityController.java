@@ -1,5 +1,9 @@
 package com.tracker.server.controller;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -11,6 +15,7 @@ import com.tracker.server.entity.Device;
 import com.tracker.server.entity.IdleActivity;
 import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.repository.IdleActivityRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,5 +56,41 @@ public class IdleActivityController {
         db.setStatus("CLOSED");
 
         return repository.save(db);
+    }
+    
+    
+    @PostMapping("/recover/{deviceId}")
+    public void recoverIdleActivities(
+            @PathVariable Long deviceId) {
+
+        List<IdleActivity> running =
+                repository.findByDeviceIdAndStatus(
+                        deviceId,
+                        "RUNNING");
+
+        Device device =
+                deviceRepository.findById(deviceId)
+                        .orElseThrow();
+
+        LocalDateTime crashTime = device.getLastSeen();
+
+        if (crashTime == null) {
+            crashTime = DateTimeUtil.now();
+        }
+
+        for (IdleActivity idle : running) {
+
+            idle.setIdleEnd(crashTime);
+
+            idle.setIdleSeconds(
+                    Duration.between(
+                            idle.getIdleStart(),
+                            crashTime)
+                            .getSeconds());
+
+            idle.setStatus("INTERRUPTED");
+        }
+
+        repository.saveAll(running);
     }
 }

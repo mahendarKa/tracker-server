@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.tracker.server.repository.DeviceRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 
@@ -19,7 +20,7 @@ public class DeviceStatusScheduler {
     public void checkOffline() {
 
         LocalDateTime limit =
-                LocalDateTime.now()
+                DateTimeUtil.now()
                         .minusMinutes(1);
 
         repository.findAll()

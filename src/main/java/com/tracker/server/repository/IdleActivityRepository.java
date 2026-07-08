@@ -63,4 +63,10 @@ public interface IdleActivityRepository extends JpaRepository<IdleActivity, Long
     Long getTotalIdleTime(
             @Param("userId")
             Long userId);
+    
+    
+    
+    List<IdleActivity> findByDeviceIdAndStatus(
+            Long deviceId,
+            String status);
 }
