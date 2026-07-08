@@ -36,4 +36,7 @@ public interface ActiveWindowActivityRepository extends JpaRepository<ActiveWind
 //            Long userId);
     
     Optional<ActiveWindowActivity> findByOfflineId(String offlineId);
+    List<ActiveWindowActivity> findByDeviceIdAndStatus(
+            Long deviceId,
+            String status);
 }

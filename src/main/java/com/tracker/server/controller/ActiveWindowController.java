@@ -1,5 +1,8 @@
 package com.tracker.server.controller;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PathVariable;
@@ -13,6 +16,7 @@ import com.tracker.server.entity.ActiveWindowActivity;
 import com.tracker.server.entity.Device;
 import com.tracker.server.repository.ActiveWindowActivityRepository;
 import com.tracker.server.repository.DeviceRepository;
+import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -83,5 +87,32 @@ public class ActiveWindowController {
         activity.setStatus(request.getStatus());
 
         return repository.save(activity);
+    }
+    
+    
+    @PostMapping("/recover/{deviceId}")
+    public void recoverWindows(
+            @PathVariable Long deviceId) {
+
+        List<ActiveWindowActivity> running =
+                repository.findByDeviceIdAndStatus(
+                        deviceId,
+                        "RUNNING");
+
+        LocalDateTime now = DateTimeUtil.now();
+
+        for (ActiveWindowActivity w : running) {
+
+            w.setEndTime(now);
+
+            w.setDurationSeconds(
+                    Duration.between(
+                            w.getStartTime(),
+                            now).getSeconds());
+
+            w.setStatus("INTERRUPTED");
+        }
+
+        repository.saveAll(running);
     }
 }
