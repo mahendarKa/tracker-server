@@ -26,53 +26,100 @@ public class DeviceSessionController {
     private final DeviceSessionRepository repository;
     private final DeviceRepository deviceRepository;
 
+//    @PostMapping("/start/{deviceId}")
+//    public void start(
+//            @PathVariable Long deviceId) {
+//    	   if (repository.findTopByDeviceIdAndStatusOrderByIdDesc(
+//    	            deviceId,
+//    	            "RUNNING").isPresent()) {
+//
+//    	        return;
+//    	    }
+//        Device device =
+//                deviceRepository
+//                        .findById(deviceId)
+//                        .orElseThrow();
+//
+//        DeviceSession session =
+//                DeviceSession.builder()
+//                        .device(device).user(device.getUser())
+//                        
+//                        .startupTime(
+//                        		DateTimeUtil.now())
+//                        .status("RUNNING")
+//                        .build();
+//
+//        repository.save(session);
+//    }
+    
+    
     @PostMapping("/start/{deviceId}")
-    public void start(
+    public DeviceSession start(
             @PathVariable Long deviceId) {
-    	   if (repository.findTopByDeviceIdAndStatusOrderByIdDesc(
-    	            deviceId,
-    	            "RUNNING").isPresent()) {
 
-    	        return;
-    	    }
         Device device =
-                deviceRepository
-                        .findById(deviceId)
+                deviceRepository.findById(deviceId)
                         .orElseThrow();
 
-        DeviceSession session =
+        return repository.save(
                 DeviceSession.builder()
-                        .device(device).user(device.getUser())
-                        
-                        .startupTime(
-                        		DateTimeUtil.now())
+                        .device(device)
+                        .user(device.getUser())
+                        .startupTime(DateTimeUtil.now())
                         .status("RUNNING")
-                        .build();
-
-        repository.save(session);
+                        .build());
     }
 
-    @PostMapping("/end/{deviceId}")
-    public void end(@PathVariable Long deviceId) {
-    	log.info("SESSION END API HIT device={}", deviceId);
-        repository.findTopByDeviceIdAndStatusOrderByIdDesc(
-                deviceId,
-                "RUNNING")
-                .ifPresent(session -> {
+//    @PostMapping("/end/{deviceId}")
+//    public void end(@PathVariable Long deviceId) {
+//    	log.info("SESSION END API HIT device={}", deviceId);
+//        repository.findTopByDeviceIdAndStatusOrderByIdDesc(
+//                deviceId,
+//                "RUNNING")
+//                .ifPresent(session -> {
+//
+//                    LocalDateTime end = DateTimeUtil.now();
+//
+//                    session.setShutdownTime(end);
+//
+//                    session.setSessionDurationSeconds(
+//                            Duration.between(
+//                                    session.getStartupTime(),
+//                                    end)
+//                                    .getSeconds());
+//
+//                    session.setStatus("CLOSED");
+//
+//                    repository.save(session);
+//                });
+//    }
+    
+    
+    
+    
+    
+    
+    
+    
+    @PostMapping("/end/{sessionId}")
+    public void end(@PathVariable Long sessionId) {
 
-                    LocalDateTime end = DateTimeUtil.now();
+        DeviceSession session =
+                repository.findById(sessionId)
+                        .orElseThrow();
 
-                    session.setShutdownTime(end);
+        LocalDateTime end = DateTimeUtil.now();
 
-                    session.setSessionDurationSeconds(
-                            Duration.between(
-                                    session.getStartupTime(),
-                                    end)
-                                    .getSeconds());
+        session.setShutdownTime(end);
 
-                    session.setStatus("CLOSED");
+        session.setSessionDurationSeconds(
+                Duration.between(
+                        session.getStartupTime(),
+                        end)
+                        .getSeconds());
 
-                    repository.save(session);
-                });
+        session.setStatus("CLOSED");
+
+        repository.save(session);
     }
 }
