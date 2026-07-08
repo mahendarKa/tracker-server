@@ -15,10 +15,12 @@ import com.tracker.server.repository.DeviceSessionRepository;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/session")
 @RequiredArgsConstructor
+@Slf4j
 public class DeviceSessionController {
 
     private final DeviceSessionRepository repository;
@@ -27,7 +29,12 @@ public class DeviceSessionController {
     @PostMapping("/start/{deviceId}")
     public void start(
             @PathVariable Long deviceId) {
+    	   if (repository.findTopByDeviceIdAndStatusOrderByIdDesc(
+    	            deviceId,
+    	            "RUNNING").isPresent()) {
 
+    	        return;
+    	    }
         Device device =
                 deviceRepository
                         .findById(deviceId)
@@ -46,29 +53,26 @@ public class DeviceSessionController {
     }
 
     @PostMapping("/end/{deviceId}")
-    public void end(
-            @PathVariable Long deviceId) {
+    public void end(@PathVariable Long deviceId) {
+    	log.info("SESSION END API HIT device={}", deviceId);
+        repository.findTopByDeviceIdAndStatusOrderByIdDesc(
+                deviceId,
+                "RUNNING")
+                .ifPresent(session -> {
 
-        DeviceSession session =
-                repository
-                        .findTopByDeviceIdAndStatusOrderByIdDesc(
-                                deviceId,
-                                "RUNNING")
-                        .orElseThrow();
+                    LocalDateTime end = DateTimeUtil.now();
 
-        LocalDateTime end =
-        		DateTimeUtil.now();
+                    session.setShutdownTime(end);
 
-        session.setShutdownTime(end);
+                    session.setSessionDurationSeconds(
+                            Duration.between(
+                                    session.getStartupTime(),
+                                    end)
+                                    .getSeconds());
 
-        session.setSessionDurationSeconds(
-                Duration.between(
-                        session.getStartupTime(),
-                        end)
-                        .getSeconds());
+                    session.setStatus("CLOSED");
 
-        session.setStatus("CLOSED");
-
-        repository.save(session);
+                    repository.save(session);
+                });
     }
 }
