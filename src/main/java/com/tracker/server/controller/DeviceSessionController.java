@@ -122,4 +122,22 @@ public class DeviceSessionController {
 
         repository.save(session);
     }
+
+
+    @PostMapping("/offline")
+public ResponseEntity<?> saveOfflineSession(
+        @RequestBody OfflineSessionRequest request) {
+
+    Session session = new Session();
+
+    session.setDeviceId(request.getDeviceId());
+
+    session.setStartTime(request.getStartTime());
+
+    session.setEndTime(request.getEndTime());
+
+    repository.save(session);
+
+    return ResponseEntity.ok().build();
+}
 }
