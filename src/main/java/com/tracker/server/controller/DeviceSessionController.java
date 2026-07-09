@@ -162,6 +162,11 @@ public class DeviceSessionController {
                 request.getEndTime() == null
                         ? "RUNNING"
                         : "CLOSED");
+        session.setSessionDurationSeconds(
+                Duration.between(
+                        session.getStartupTime(),
+                        request.getEndTime())
+                        .getSeconds());
 
         repository.save(session);
 
