@@ -3,11 +3,14 @@ package com.tracker.server.controller;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.tracker.server.dto.OfflineSessionRequest;
 import com.tracker.server.entity.Device;
 import com.tracker.server.entity.DeviceSession;
 import com.tracker.server.repository.DeviceRepository;
@@ -128,13 +131,13 @@ public class DeviceSessionController {
 public ResponseEntity<?> saveOfflineSession(
         @RequestBody OfflineSessionRequest request) {
 
-    Session session = new Session();
+    DeviceSession session = new DeviceSession();
+    Device device=deviceRepository.findById(request.getDeviceId()).orElseThrow(()->new RuntimeException("device not found with: "+request.getDeviceId()));
+    session.setDevice(device);
 
-    session.setDeviceId(request.getDeviceId());
+    session.setStartupTime(request.getStartTime());
 
-    session.setStartTime(request.getStartTime());
-
-    session.setEndTime(request.getEndTime());
+    session.setShutdownTime(request.getEndTime());
 
     repository.save(session);
 
