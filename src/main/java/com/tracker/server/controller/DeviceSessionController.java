@@ -126,21 +126,45 @@ public class DeviceSessionController {
         repository.save(session);
     }
 
-
+//
+//    @PostMapping("/offline")
+//public ResponseEntity<?> saveOfflineSession(
+//        @RequestBody OfflineSessionRequest request) {
+//
+//    DeviceSession session = new DeviceSession();
+//    Device device=deviceRepository.findById(request.getDeviceId()).orElseThrow(()->new RuntimeException("device not found with: "+request.getDeviceId()));
+//    session.setDevice(device);
+//
+//    session.setStartupTime(request.getStartTime());
+//
+//    session.setShutdownTime(request.getEndTime());
+//
+//    repository.save(session);
+//
+//    return ResponseEntity.ok().build();
+//}
+    
+    
     @PostMapping("/offline")
-public ResponseEntity<?> saveOfflineSession(
-        @RequestBody OfflineSessionRequest request) {
+    public ResponseEntity<?> saveOfflineSession(
+            @RequestBody OfflineSessionRequest request) {
 
-    DeviceSession session = new DeviceSession();
-    Device device=deviceRepository.findById(request.getDeviceId()).orElseThrow(()->new RuntimeException("device not found with: "+request.getDeviceId()));
-    session.setDevice(device);
+        DeviceSession session = new DeviceSession();
 
-    session.setStartupTime(request.getStartTime());
+        Device device=deviceRepository.findById(request.getDeviceId()).orElseThrow(()->new RuntimeException("device not found with: "+request.getDeviceId()));
+        session.setDevice(device);
 
-    session.setShutdownTime(request.getEndTime());
+        session.setStartupTime(request.getStartTime());
 
-    repository.save(session);
+        session.setShutdownTime(request.getEndTime());
 
-    return ResponseEntity.ok().build();
-}
+        session.setStatus(
+                request.getEndTime() == null
+                        ? "RUNNING"
+                        : "CLOSED");
+
+        repository.save(session);
+
+        return ResponseEntity.ok().build();
+    }
 }
