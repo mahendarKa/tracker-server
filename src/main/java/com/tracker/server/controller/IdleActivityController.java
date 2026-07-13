@@ -46,16 +46,20 @@ public class IdleActivityController {
     public IdleActivity endIdle(
             @PathVariable Long id,
             @RequestBody IdleActivity activity) {
-
+    	System.out.println("Received = " + activity.getIdleEnd());
     	IdleActivity db =
     			repository.findById(id)
                         .orElseThrow();
 
         db.setIdleEnd(activity.getIdleEnd());
+        System.out.println("Before Save = " + db.getIdleEnd());
         db.setIdleSeconds(activity.getIdleSeconds());
         db.setStatus("CLOSED");
 
-        return repository.save(db);
+        IdleActivity saved =repository.save(db);
+
+System.out.println("After Save = " + saved.getIdleEnd());
+return saved;
     }
     
     
