@@ -15,11 +15,14 @@
 
 package com.tracker.server.repository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import com.tracker.server.entity.ActiveWindowActivity;
@@ -39,4 +42,21 @@ public interface ActiveWindowActivityRepository extends JpaRepository<ActiveWind
     List<ActiveWindowActivity> findByDeviceIdAndStatus(
             Long deviceId,
             String status);
+    
+    Optional<ActiveWindowActivity>
+    findFirstByDeviceIdAndWindowTitleAndStatusOrderByStartTimeDesc(
+            Long deviceId,
+            String windowTitle,
+            String status);
+    
+    @Modifying
+    @Query("""
+    update ActiveWindowActivity a
+    set a.status='CLOSED',
+        a.endTime=:end
+    where a.deviceId=:deviceId
+    and a.status='RUNNING'
+    """)
+    void closeRunning(Long deviceId,
+                      LocalDateTime end);
 }

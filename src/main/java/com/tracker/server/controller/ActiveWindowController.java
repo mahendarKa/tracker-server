@@ -16,6 +16,7 @@ import com.tracker.server.entity.ActiveWindowActivity;
 import com.tracker.server.entity.Device;
 import com.tracker.server.repository.ActiveWindowActivityRepository;
 import com.tracker.server.repository.DeviceRepository;
+import com.tracker.server.service.ActiveWindowActivityService;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -29,6 +30,7 @@ public class ActiveWindowController {
 
     private final ActiveWindowActivityRepository repository;
     private final DeviceRepository deviceRepository;
+    private final ActiveWindowActivityService activeWindowActivityService;
 
 //    @PostMapping("/{deviceId}")
 //    public ActiveWindowActivity save(
@@ -45,32 +47,41 @@ public class ActiveWindowController {
 //    }
     
     
+//    @PostMapping("/{deviceId}")
+//    public ActiveWindowActivity save(
+//            @PathVariable Long deviceId,
+//            @RequestBody ActiveWindowActivity activity) {
+//
+//        Optional<ActiveWindowActivity> existing =
+//        		repository.findByOfflineId(activity.getOfflineId());
+//
+//        if (existing.isPresent()) {
+//
+//        	ActiveWindowActivity db = existing.get();
+//
+//            db.setEndTime(activity.getEndTime());
+//            db.setDurationSeconds(activity.getDurationSeconds());
+//            db.setStatus(activity.getStatus());
+//
+//            return repository.save(db);
+//        }
+//
+//        Device device =
+//                deviceRepository.findById(deviceId)
+//                        .orElseThrow();
+//
+//        activity.setDevice(device);
+//
+//        return repository.save(activity);
+//    }
+    
+    
     @PostMapping("/{deviceId}")
     public ActiveWindowActivity save(
             @PathVariable Long deviceId,
             @RequestBody ActiveWindowActivity activity) {
 
-        Optional<ActiveWindowActivity> existing =
-        		repository.findByOfflineId(activity.getOfflineId());
-
-        if (existing.isPresent()) {
-
-        	ActiveWindowActivity db = existing.get();
-
-            db.setEndTime(activity.getEndTime());
-            db.setDurationSeconds(activity.getDurationSeconds());
-            db.setStatus(activity.getStatus());
-
-            return repository.save(db);
-        }
-
-        Device device =
-                deviceRepository.findById(deviceId)
-                        .orElseThrow();
-
-        activity.setDevice(device);
-
-        return repository.save(activity);
+        return activeWindowActivityService.create(deviceId, activity);
     }
     
     @PutMapping("/{id}")
