@@ -23,9 +23,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.tracker.server.entity.ActiveWindowActivity;
+
+import jakarta.transaction.Transactional;
 
 @Repository
 public interface ActiveWindowActivityRepository extends JpaRepository<ActiveWindowActivity, Long>, JpaSpecificationExecutor<ActiveWindowActivity> {
@@ -48,15 +51,15 @@ public interface ActiveWindowActivityRepository extends JpaRepository<ActiveWind
             Long deviceId,
             String windowTitle,
             String status);
-    
     @Modifying
+    @Transactional
     @Query("""
     update ActiveWindowActivity a
     set a.status='CLOSED',
         a.endTime=:end
-    where a.deviceId=:deviceId
+    where a.device.id=:deviceId
     and a.status='RUNNING'
     """)
-    void closeRunning(Long deviceId,
-                      LocalDateTime end);
+    void closeRunning(@Param("deviceId") Long deviceId,
+                      @Param("end") LocalDateTime end);
 }
