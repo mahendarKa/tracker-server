@@ -1,6 +1,11 @@
 package com.tracker.server.controller;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.tracker.server.dto.AdminLoginRequest;
 import com.tracker.server.dto.LoginRequest;
@@ -26,12 +31,30 @@ public class AuthController {
     }
     
     
+
     @PostMapping("/register")
-    public String register(
+    public ResponseEntity<String> register(
             @RequestBody RegisterRequest request) {
 
-        return authService.register(
-                request);
+        try {
+
+            String response = authService.register(request);
+
+            return ResponseEntity.ok(response);
+
+        } catch (RuntimeException e) {
+
+            if ("Username already registered".equals(e.getMessage())) {
+
+                return ResponseEntity
+                        .status(HttpStatus.CONFLICT)
+                        .body("Username already registered");
+            }
+
+            return ResponseEntity
+                    .status(HttpStatus.BAD_REQUEST)
+                    .body(e.getMessage());
+        }
     }
     
     
