@@ -18,10 +18,12 @@ import com.tracker.server.repository.IdleActivityRepository;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/api/idle")
 @RequiredArgsConstructor
+@Slf4j
 public class IdleActivityController {
 
     private final IdleActivityRepository repository;
@@ -54,7 +56,7 @@ public class IdleActivityController {
         db.setIdleEnd(activity.getIdleEnd());
         db.setIdleSeconds(activity.getIdleSeconds());
         db.setStatus("CLOSED");
-
+log.info(activity.getIdleEnd());
         return repository.save(db);
     }
     
