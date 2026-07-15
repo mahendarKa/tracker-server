@@ -1,11 +1,9 @@
 package com.tracker.server.repository;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.tracker.server.entity.Device;
 import com.tracker.server.entity.User;
 
 public interface UserRepository
@@ -13,4 +11,5 @@ public interface UserRepository
 
     Optional<User> findByUsername(
             String username);
+    boolean existsByUsername(String username);
 }

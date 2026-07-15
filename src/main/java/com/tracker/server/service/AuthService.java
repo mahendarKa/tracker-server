@@ -25,23 +25,16 @@ public class AuthService {
 
     private final JwtUtil jwtUtil;
 
-    public String register(
-            RegisterRequest request) {
-    
+    public String register(RegisterRequest request) {
 
-        User user =
-                User.builder()
-                        .username(
-                                request.getUsername())
-//                        .password(
-//                                passwordEncoder.encode(
-//                                        request.getPassword()))
-//                        .role(
-//                                request.getRole()
+        if (userRepository.existsByUsername(request.getUsername())) {
+            throw new RuntimeException("Username already registered");
+        }
 
-                        .role(
-                                "USER")
-                        .build();
+        User user = User.builder()
+                .username(request.getUsername())
+                .role("USER")
+                .build();
 
         userRepository.save(user);
 

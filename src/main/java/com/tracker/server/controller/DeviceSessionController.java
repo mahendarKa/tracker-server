@@ -110,6 +110,8 @@ public class DeviceSessionController {
         DeviceSession session =
                 repository.findById(sessionId)
                         .orElseThrow();
+        
+        if (session.getShutdownTime() != null) return;
 
         LocalDateTime end = DateTimeUtil.now();
 
