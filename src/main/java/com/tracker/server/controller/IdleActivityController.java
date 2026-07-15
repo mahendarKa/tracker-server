@@ -15,6 +15,7 @@ import com.tracker.server.entity.Device;
 import com.tracker.server.entity.IdleActivity;
 import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.repository.IdleActivityRepository;
+import com.tracker.server.service.RecoveryService;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class IdleActivityController {
 
     private final IdleActivityRepository repository;
     private final DeviceRepository deviceRepository;
+    private final RecoveryService recoveryService;
 
     @PostMapping("/start/{deviceId}")
     public IdleActivity save(
@@ -63,34 +65,6 @@ public class IdleActivityController {
     public void recoverIdleActivities(
             @PathVariable Long deviceId) {
 
-        List<IdleActivity> running =
-                repository.findByDeviceIdAndStatus(
-                        deviceId,
-                        "RUNNING");
-
-        Device device =
-                deviceRepository.findById(deviceId)
-                        .orElseThrow();
-
-        LocalDateTime crashTime = device.getLastSeen();
-
-        if (crashTime == null) {
-            crashTime = DateTimeUtil.now();
-        }
-
-        for (IdleActivity idle : running) {
-
-            idle.setIdleEnd(crashTime);
-
-            idle.setIdleSeconds(
-                    Duration.between(
-                            idle.getIdleStart(),
-                            crashTime)
-                            .getSeconds());
-
-            idle.setStatus("INTERRUPTED");
-        }
-
-        repository.saveAll(running);
+        recoveryService.recoveryIdle(deviceId);
     }
 }

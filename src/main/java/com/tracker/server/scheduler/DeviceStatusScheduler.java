@@ -6,6 +6,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.tracker.server.repository.DeviceRepository;
+import com.tracker.server.service.RecoveryService;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 public class DeviceStatusScheduler {
 
     private final DeviceRepository repository;
+    private final RecoveryService recoveryService;
 
     @Scheduled(fixedDelay = 60000)
     public void checkOffline() {
@@ -35,6 +37,10 @@ public class DeviceStatusScheduler {
                         device.setOnline(false);
 
                         repository.save(device);
+                        recoveryService.recoveryProcess(device.getId());
+                        recoveryService.recoveryWindow(device.getId());
+                        recoveryService.recoveryIdle(device.getId());
+                        recoveryService.recoverySession(device.getId());
                     }
 
                 });

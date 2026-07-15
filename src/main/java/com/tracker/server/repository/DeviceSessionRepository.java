@@ -67,4 +67,5 @@ public interface DeviceSessionRepository extends JpaRepository<DeviceSession, Lo
             Long userId);
     
     List<DeviceSession> findByStatus(String status);
+    List<DeviceSession> findByDeviceIdAndStatus(Long deviceId,String status);
 }

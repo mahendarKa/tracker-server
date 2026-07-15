@@ -34,6 +34,7 @@ import com.tracker.server.repository.DeviceSessionRepository;
 import com.tracker.server.repository.IdleActivityRepository;
 import com.tracker.server.repository.ProcessActivityRepository;
 import com.tracker.server.repository.UserRepository;
+import com.tracker.server.service.RecoveryService;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -48,41 +49,44 @@ public class ProcessActivityController {
     private final UserRepository userRepository;
     private final DeviceSessionRepository sessionRepository;
     private final IdleActivityRepository idleRepository;
+    private final RecoveryService recoveryService;
     
     
     @PostMapping("/recover/{deviceId}")
     public void recoverRunningProcesses(
             @PathVariable Long deviceId) {
 
-    	   List<ProcessActivity> running =
-    			   processRepository.findByDeviceIdAndStatus(
-    	                    deviceId,
-    	                    "RUNNING");
-
-    	   Device device =
-    		        deviceRepository.findById(deviceId)
-    		                .orElseThrow();
-
-    		LocalDateTime crashTime = device.getLastSeen();
-
-    		if (crashTime == null) {
-    		    crashTime = DateTimeUtil.now();
-    		}
-
-    	    for (ProcessActivity p : running) {
-
-    	        p.setEndTime(crashTime);
-
-    	        p.setDurationSeconds(
-    	                Duration.between(
-    	                        p.getStartTime(),
-    	                        crashTime)
-    	                        .getSeconds());
-
-    	        p.setStatus("INTERUPTED");
-    	    }
-
-    	    processRepository.saveAll(running);
+//    	   List<ProcessActivity> running =
+//    			   processRepository.findByDeviceIdAndStatus(
+//    	                    deviceId,
+//    	                    "RUNNING");
+//
+//    	   Device device =
+//    		        deviceRepository.findById(deviceId)
+//    		                .orElseThrow();
+//
+//    		LocalDateTime crashTime = device.getLastSeen();
+//
+//    		if (crashTime == null) {
+//    		    crashTime = DateTimeUtil.now();
+//    		}
+//
+//    	    for (ProcessActivity p : running) {
+//
+//    	        p.setEndTime(crashTime);
+//
+//    	        p.setDurationSeconds(
+//    	                Duration.between(
+//    	                        p.getStartTime(),
+//    	                        crashTime)
+//    	                        .getSeconds());
+//
+//    	        p.setStatus("INTERUPTED");
+//    	    }
+//
+//    	    processRepository.saveAll(running);
+    	recoveryService.recoveryProcess(deviceId);
+    	
     }
 
 //    @PostMapping("/{deviceId}")

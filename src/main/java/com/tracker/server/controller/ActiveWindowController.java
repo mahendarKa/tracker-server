@@ -17,6 +17,7 @@ import com.tracker.server.entity.Device;
 import com.tracker.server.repository.ActiveWindowActivityRepository;
 import com.tracker.server.repository.DeviceRepository;
 import com.tracker.server.service.ActiveWindowActivityService;
+import com.tracker.server.service.RecoveryService;
 import com.tracker.server.util.DateTimeUtil;
 
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,7 @@ import lombok.extern.slf4j.Slf4j;
 @RequiredArgsConstructor
 @Slf4j
 public class ActiveWindowController {
-
+	private final RecoveryService recoveryService;
     private final ActiveWindowActivityRepository repository;
     private final DeviceRepository deviceRepository;
     private final ActiveWindowActivityService activeWindowActivityService;
@@ -105,33 +106,6 @@ public class ActiveWindowController {
     public void recoverWindows(
             @PathVariable Long deviceId) {
 
-        List<ActiveWindowActivity> running =
-                repository.findByDeviceIdAndStatus(
-                        deviceId,
-                        "RUNNING");
-
-        Device device =
-                deviceRepository.findById(deviceId)
-                        .orElseThrow();
-
-        LocalDateTime crashTime = device.getLastSeen();
-
-        if (crashTime == null) {
-            crashTime = DateTimeUtil.now();
-        }
-
-        for (ActiveWindowActivity w : running) {
-
-            w.setEndTime(crashTime);
-
-            w.setDurationSeconds(
-                    Duration.between(
-                            w.getStartTime(),
-                            crashTime).getSeconds());
-
-            w.setStatus("INTERRUPTED");
-        }
-
-        repository.saveAll(running);
+        recoveryService.recoveryWindow(deviceId);
     }
 }
