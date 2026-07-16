@@ -18,12 +18,12 @@ public class DeviceStatusScheduler {
     private final DeviceRepository repository;
     private final RecoveryService recoveryService;
 
-    @Scheduled(fixedDelay = 10000)
+    @Scheduled(fixedDelay = 30000)
     public void checkOffline() {
 
         LocalDateTime limit =
                 DateTimeUtil.now()
-                        .minusSeconds(30);
+                        .minusSeconds(20);
 
         repository.findAll()
                 .forEach(device -> {

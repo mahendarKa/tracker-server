@@ -55,8 +55,14 @@ public class RecoveryService {
                     Duration.between(
                             w.getStartTime(),
                             crashTime).getSeconds());
-
+            if(Duration.between(
+                            w.getStartTime(),
+                            crashTime).getSeconds()>0) {
             w.setStatus("CLOSED");
+            }
+            else {
+            	w.setStatus("INTERRUPTED");
+            }
         }
 
         activeWindowActivityRepository.saveAll(running);
@@ -89,7 +95,14 @@ public class RecoveryService {
                             crashTime)
                             .getSeconds());
 
-            idle.setStatus("CLOSED");
+            if(Duration.between(
+            		idle.getIdleStart(),
+                    crashTime).getSeconds()>0) {
+            	idle.setStatus("CLOSED");
+    }
+    else {
+    	idle.setStatus("INTERRUPTED");
+    }
         }
 
         idleActivityRepository.saveAll(running);
@@ -121,7 +134,14 @@ public class RecoveryService {
  	                        crashTime)
  	                        .getSeconds());
 
- 	        p.setStatus("CLOSED");
+ 	       if(Duration.between(
+                   p.getStartTime(),
+                   crashTime).getSeconds()>0) {
+   p.setStatus("CLOSED");
+   }
+   else {
+   	p.setStatus("INTERRUPTED");
+   }
  	    }
 
  	    processRepository.saveAll(running);
@@ -143,7 +163,15 @@ public class RecoveryService {
                             end)
                             .getSeconds());
 
-            session.setStatus("CLOSED");
+            if(Duration.between(
+            		session.getStartupTime(),
+                    end)
+                    .getSeconds()>0) {
+            	session.setStatus("CLOSED");
+    }
+    else {
+    	session.setStatus("INTERRUPTED");
+    }
 
             deviceSessionRepository.save(session);
 
