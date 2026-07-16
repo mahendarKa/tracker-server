@@ -180,7 +180,7 @@ public class DeviceSessionController {
     
     
     @PostMapping
-    public ResponseEntity<?> offlineSession(
+    public void offlineSession(
             @RequestBody OfflineSessionRequest request) {
 
         DeviceSession session = new DeviceSession();
@@ -204,8 +204,5 @@ public class DeviceSessionController {
 
         repository.save(session);
         
-        
-
-        return ResponseEntity.ok().build();
     }
 }
