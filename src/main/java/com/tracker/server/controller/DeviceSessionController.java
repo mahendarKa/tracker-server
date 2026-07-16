@@ -171,6 +171,40 @@ public class DeviceSessionController {
                         .getSeconds());
 
         repository.save(session);
+        
+        
+
+        return ResponseEntity.ok().build();
+    }
+    
+    
+    
+    @PostMapping
+    public ResponseEntity<?> offlineSession(
+            @RequestBody OfflineSessionRequest request) {
+
+        DeviceSession session = new DeviceSession();
+
+        Device device=deviceRepository.findById(request.getDeviceId()).orElseThrow(()->new RuntimeException("device not found with: "+request.getDeviceId()));
+        session.setDevice(device);
+
+        session.setStartupTime(request.getStartTime());
+
+        session.setShutdownTime(request.getEndTime());
+
+        session.setStatus(
+                request.getEndTime() == null
+                        ? "RUNNING"
+                        : "CLOSED");
+        session.setSessionDurationSeconds(
+                Duration.between(
+                        session.getStartupTime(),
+                        request.getEndTime())
+                        .getSeconds());
+
+        repository.save(session);
+        
+        
 
         return ResponseEntity.ok().build();
     }
