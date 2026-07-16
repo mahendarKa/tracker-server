@@ -56,7 +56,7 @@ public class RecoveryService {
                             w.getStartTime(),
                             crashTime).getSeconds());
 
-            w.setStatus("INTERRUPTED");
+            w.setStatus("CLOSED");
         }
 
         activeWindowActivityRepository.saveAll(running);
@@ -89,7 +89,7 @@ public class RecoveryService {
                             crashTime)
                             .getSeconds());
 
-            idle.setStatus("INTERRUPTED");
+            idle.setStatus("CLOSED");
         }
 
         idleActivityRepository.saveAll(running);
@@ -121,7 +121,7 @@ public class RecoveryService {
  	                        crashTime)
  	                        .getSeconds());
 
- 	        p.setStatus("INTERUPTED");
+ 	        p.setStatus("CLOSED");
  	    }
 
  	    processRepository.saveAll(running);
@@ -143,7 +143,7 @@ public class RecoveryService {
                             end)
                             .getSeconds());
 
-            session.setStatus("RECOVERED");
+            session.setStatus("CLOSED");
 
             deviceSessionRepository.save(session);
 
